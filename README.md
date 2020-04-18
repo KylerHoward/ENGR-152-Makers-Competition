@@ -1,30 +1,59 @@
 # ENGR-152-Makers-Competition
-All commands in "" should be run in powershell
+All commands should be run in powershell
 
 # Commands to run 
-run powershell with admin
-"Set-ExecutionPolicy AllSigned"
-"Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
-"choco install git"
+Run powershell with admin
+
+    Set-ExecutionPolicy AllSigned"
+
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    
+    choco install git
+    
 Close Powershell window
 
+Open new powershell window
 
-open new powershell window
-"git clone https://github.com/KylerHoward/ENGR-152-Makers-Competition.git"
+    git clone https://github.com/KylerHoward/ENGR-152-Makers-Competition.git
 
 
 # To do work
-"git pull" to pull in latest code
-"ls" to see what is in the current branch/master
-"git checkout -b "name of branch (yourName/branchName)""
-edit the files like normal
-"git status" to see what changes have been made
-"git add "file name""
-"git commit -m "description of edits" if you're good with the edits
-"git push" when done and want others to see
+To pull in latest code
 
-Go to git hub repository website to make pull request
-make a pull request, approve it, merge/squash to master, and delete the branch
+    git pull 
 
-"git checkout master" to move to master
-"git pull" to start again and pull in latest code
+To see what files are in the current branch
+
+    ls
+
+To make a new branch to work in
+
+    git checkout -b "name of branch (yourName/branchName)"
+    
+Edit the files like you normaly would
+
+To see what changes have been made
+
+    git status
+    
+To add your files so they will be updated
+
+    git add "file name"
+    
+To save your changes
+
+    git commit -m "description of edits"
+    
+To send changes to git hub server. This might pull up a line of command that you need to copy and paste
+
+    git push
+
+Go to main git hub repository website to make pull request
+
+make a pull request, approve it, squash and merge to master, and delete the branch
+
+To go back to master to start again
+
+    git checkout master
+
+Start from top again
