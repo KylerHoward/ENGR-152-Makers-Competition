@@ -18,6 +18,11 @@ Open new powershell window
 
 
 # To do work
+Open up powershell and direct it to the repository that you are working on. If you have spaces in the file names, you need "" around the address. If there are no spaces, "" are not needed
+
+    cd "file address" 
+    (ex: cd .\OneDrive\Documents\Arduino)
+
 To pull in latest code
 
     git pull 
