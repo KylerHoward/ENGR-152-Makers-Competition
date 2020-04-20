@@ -37,7 +37,6 @@ int JoystickButton = A2;         // joystick button treat as digital
 
 // declare variable data holders
 int SpeakerCount;                // For WAVE shield  -  not sure what it does
-int ConfirmationButtonState;     // Do we need button state? could it just be in an if statement?
 int CurrentState;                // Holds State of State machine
 
 // Custom Function Variable Parameters
