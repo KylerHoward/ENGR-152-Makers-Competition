@@ -5,7 +5,7 @@
  *  
  *  Pin Setup for LCD:
  *  GND to Ground
- *  VCC to A3
+ *  VCC to 5V
  *  SDA to A4
  *  SCL to A5
  *  
@@ -23,31 +23,23 @@
 // starting the LCD at the I2C address and the parameters the microprocessor needs
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
-int LCDPowerPin = A3;            // Power for LCD screen
+int Button = 9;
 
 //=========================================================================
 //                                Setup
 //=========================================================================
 void setup() {
 
-  // setting the LCDPowerPin as the output
-  pinMode (LCDPowerPin, OUTPUT);
-
-  // turning the LCD on
-  digitalWrite (LCDPowerPin, HIGH);
+  lcd.backlight();
 
   // Starting the LCD at 16 columns and 2 rows
   lcd.begin(16,2);
 
   // clearing the LCD and putting the cursor at 0,0
-  lcd.clear();
+  lcd.clear();  
 
-  // printing "Hello World!" to the LCD
-  lcd.print("Hello World!");      
-  
-  /* when using pin A3 to power the LCD, it does not display "Hello World!"
-   * when directly plugging into the 5V rail, it works. We will have to figure this out...
-   */
+  // setting the button pin as an output
+  pinMode (Button, INPUT_PULLUP);
  
 }
 
@@ -57,6 +49,26 @@ void setup() {
 
 void loop(){
 
-  
+  if (digitalRead(Button) == HIGH){
+
+    // turns on backlight
+    lcd.backlight();
+
+    // goes to row 0, collumn 0
+    lcd.setCursor(0,0);
+
+    // printing "Hello World!" to the LCD
+    lcd.print("Hello World!");   
+
+  }
+
+  else {
+
+    // turning the LCD off
+    lcd.noBacklight();
+
+    delay (1000);
+       
+  }
   
 }
