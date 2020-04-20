@@ -1,27 +1,27 @@
 /* ENGR 152
  *  Maker Competition
  *  Remind Device
- *  Last edited by Kyler Howard, 4-18-20
+ *  Last edited by Kyler Howard and Jackson Pope
 */
 
 int ConfirmationButton = 9;
-int ConfirmationButtonState = digitalRead(ConfirmationButton);
 
 void setup() {
   // put your setup code here, to run once:
  Serial.begin (9600);
  pinMode (ConfirmationButton, INPUT_PULLUP);
-Serial.print ("Test");
+Serial.println ("Test");
 
 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  ConfirmationButtonState = digitalRead(ConfirmationButton);
   
-  if (ConfirmationButtonState == LOW){
+  if (digitalRead(ConfirmationButton)== LOW){
 
-    Serial.print("Button Pushed");
+    Serial.println("Button Pushed");
+
+    delay(500);
+    
   }
 }

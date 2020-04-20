@@ -36,7 +36,6 @@ int MotionSensor = 11;           // Motion sensor input
 int XJoystick = A0;              // x-axis of joystick
 int YJoystick = A1;              // y-axis of joystick
 int JoystickButton = A2;         // joystick button treat as digital
-int LCDPowerPin = A3;            // Power for LCD screen
 
 // declare variable data holders
 int SpeakerCount;                // For WAVE shield  -  not sure what it does
@@ -47,10 +46,10 @@ int PreviousMillis;              // Holds millis since joystick was moved for mi
 
 // Custom Function Variables and Parameters
 int DebounceDelay = 500;         // Delay set for debounce time - delay time after a button is pressed
-int Up = 600;                    // Trigger value for moving joystick up - neutral is about 511
-int Down = 400;                  // Trigger value for moving joystick down - neutral is about 511
-int Left = 400;                  // Trigger value for moving joystick left - neutral is about 511
-int Right = 600;                 // Trigger value for moving joystick right - neutral is about 511
+int Down = 700;                  // Trigger value for moving joystick down - neutral is about 511
+int Up = 300;                    // Trigger value for moving joystick up - neutral is about 511
+int Left = 300;                  // Trigger value for moving joystick left - neutral is about 511
+int Right = 700;                 // Trigger value for moving joystick right - neutral is about 511
 
 
 
@@ -65,14 +64,13 @@ void setup() {
   // Starting the LCD at 16 columns and 2 rows
   lcd.begin(16,2);
 
-  // clearing the LCD and putting the cursor at 0,0
-  lcd.clear();
-
   // start serial monitor at 9600 bpm
   Serial.begin(9600);
 
   // set the currentState to STATE_GENERAL_WAIT
   CurrentState = STATE_GENERAL_WAIT;
+  Serial.println("STATE_GENERAL_WAIT");
+
 
   // Set pin modes for digital pins
   pinMode (IndicatorLED, OUTPUT);
@@ -83,13 +81,10 @@ void setup() {
   pinMode (XJoystick, INPUT);
   pinMode (YJoystick, INPUT);
   pinMode (JoystickButton, INPUT_PULLUP);
-  pinMode (LCDPowerPin, OUTPUT);
 
   //Turn on indicator LED
   digitalWrite (IndicatorLED, HIGH);
-
-  // Print initializing message on LCD Screen
-  lcd.print("~~TESTING~~");
+  
 }
 
 
@@ -105,7 +100,6 @@ void loop() {
   // State machine will Print out which state it moves to. Helps with troubleshooting
   // Starts state machine
   switch(CurrentState){
-  
       
     //=============================
     //    State One
@@ -114,19 +108,10 @@ void loop() {
     // starts state one of state machine
     case STATE_GENERAL_WAIT:
 
-      Serial.print("STATE_GENERAL_WAIT");
-      
-      // Print trouble shooting information 
-        // If button is pressed, print button pushed. - note: logic is inverted because of pullup input
-        if (digitalRead(ConfirmationButton) == LOW){
-          
-          Serial.println("Button Pushed");      // this works perfectly!
-
-          Debounce();
-        }
+      lcd.noBacklight();
 
       // If the joystick is moved or button is pressed
-      if(analogRead(XJoystick) > Right || analogRead(XJoystick) < Left || analogRead(YJoystick) > Up || analogRead(YJoystick) < Down || digitalRead(JoystickButton) == LOW) {
+      if(analogRead(XJoystick) > Right || analogRead(XJoystick) < Left || analogRead(YJoystick) < Up || analogRead(YJoystick) > Down || digitalRead(JoystickButton) == LOW || digitalRead(ConfirmationButton) == LOW) {
        
         // move to STATE_LCD_ON
         CurrentState = STATE_LCD_ON;
@@ -134,7 +119,7 @@ void loop() {
         
         Debounce();
       }
-      
+     
       // If motion is sensed, set the speaker counter to 1 and move to STATE_SPEAKER_PLAY
       // Logic is reversed for pullup input
       if(digitalRead(MotionSensor) == LOW){
@@ -151,7 +136,8 @@ void loop() {
       // end the case
       break;
 
-      
+      // this state now appears to work with no issues!
+  
       
     //=============================
     //    State Two
@@ -160,12 +146,10 @@ void loop() {
     // starts state two of state machine
     case STATE_LCD_ON:
       
-      // Turn LCD on
-      digitalWrite(LCDPowerPin, HIGH);
+      lcd.backlight();
       
       //reset LCD screen
       lcd.clear();
-      lcd.setCursor(0,0);
       
       // Print first audio file
       lcd.print("audio file 1");      // Is this supposed to be a variable, or just a placeholder until enough wave testing has been done?
@@ -320,6 +304,7 @@ void loop() {
 
       // end the case
       break;
+
      
   }
     
@@ -330,6 +315,6 @@ void loop() {
 //             Custom Functions
 //===========================================
 
-void Debounce(void) {
+void Debounce (void) {
   delay(DebounceDelay);
 }
