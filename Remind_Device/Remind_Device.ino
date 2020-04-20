@@ -25,6 +25,7 @@ const int STATE_AUDIO_SELECT = 4;
 const int STATE_SPEAKER_PLAY = 5;
 const int STATE_ACKNOWLEDGE_WAIT = 6;
 const int STATE_MOTION_OFF = 7;
+const int n = 8;
 
 // declaring digital pins
 int IndicatorLED = 8;            // Indicator LED output
@@ -46,10 +47,10 @@ int PreviousMillis;              // Holds millis since joystick was moved for mi
 
 // Custom Function Variables and Parameters
 int DebounceDelay = 500;         // Delay set for debounce time - delay time after a button is pressed
-int Up = 700;                    // Trigger value for moving joystick up
-int Down = 300;                  // Trigger value for moving joystick down
-int Left = 300;                  // Trigger value for moving joystick left
-int Right = 700;                 // Trigger value for moving joystick right
+int Up = 600;                    // Trigger value for moving joystick up - neutral is about 511
+int Down = 400;                  // Trigger value for moving joystick down - neutral is about 511
+int Left = 400;                  // Trigger value for moving joystick left - neutral is about 511
+int Right = 600;                 // Trigger value for moving joystick right - neutral is about 511
 
 
 
@@ -66,7 +67,6 @@ void setup() {
 
   // clearing the LCD and putting the cursor at 0,0
   lcd.clear();
-  lcd.setCursor(0,0);
 
   // start serial monitor at 9600 bpm
   Serial.begin(9600);
@@ -82,7 +82,7 @@ void setup() {
   // Set pin modes for analog pins
   pinMode (XJoystick, INPUT);
   pinMode (YJoystick, INPUT);
-  pinMode (JoystickButton, INPUT);
+  pinMode (JoystickButton, INPUT_PULLUP);
   pinMode (LCDPowerPin, OUTPUT);
 
   //Turn on indicator LED
@@ -113,28 +113,17 @@ void loop() {
 
     // starts state one of state machine
     case STATE_GENERAL_WAIT:
+
+      Serial.print("STATE_GENERAL_WAIT");
       
       // Print trouble shooting information 
         // If button is pressed, print button pushed. - note: logic is inverted because of pullup input
         if (digitalRead(ConfirmationButton) == LOW){
-          Serial.println("Button Pushed");
-        }
-      
-        // If Joystick is moved, Print the analog value of Joystick inputs 
-        if(analogRead(XJoystick) > Right || analogRead(XJoystick) < Left || analogRead(YJoystick) > Up || analogRead(YJoystick) < Down) {
           
-          // Print "Joystick moved"
-          Serial.println("Joystick Moved");
-          
-          //print x-axis: (analog reading of x)
-          Serial.print("x-axis: ");
-          Serial.println(analogRead(XJoystick));
-          
-          //print y-axis: (analog reading of y)
-          Serial.print("y-axis: ");
-          Serial.println(analogRead(YJoystick));
-        }
+          Serial.println("Button Pushed");      // this works perfectly!
 
+          Debounce();
+        }
 
       // If the joystick is moved or button is pressed
       if(analogRead(XJoystick) > Right || analogRead(XJoystick) < Left || analogRead(YJoystick) > Up || analogRead(YJoystick) < Down || digitalRead(JoystickButton) == LOW) {
@@ -179,14 +168,14 @@ void loop() {
       lcd.setCursor(0,0);
       
       // Print first audio file
-      lcd.print(audio file 1);
+      lcd.print("audio file 1");      // Is this supposed to be a variable, or just a placeholder until enough wave testing has been done?
       
       // Set audio file select state to the first page
-      AudioFile = 1;
+      int AudioFile = 1;
       
       // Move to STATE_FILE_WAIT
       CurrentState = STATE_FILE_WAIT;
-      Serial.Println("STATE_FILE_WAIT");
+      Serial.println("STATE_FILE_WAIT");
       
       // Set timer for mini state machine to 0
       PreviousMillis = millis();
@@ -214,7 +203,7 @@ void loop() {
         
         // Move to general wait state
         CurrentState = STATE_GENERAL_WAIT;
-        Serial.Println("STATE_GENERAL_WAIT");
+        Serial.println("STATE_GENERAL_WAIT");
       }
       
       //---------------------------
@@ -239,7 +228,7 @@ void loop() {
             AudioSelectState = n + 1;
             
             // Print the next file's name on LCD screen
-            lcd.print(audio file n + 1);
+            lcd.print("audio file n + 1");      // Again, is this supposed to be a variable or waiting for Wave testing?
             
             Debounce();
           }
@@ -251,7 +240,7 @@ void loop() {
             AudioSelectState = n - 1;
             
             // Print the previous audio file
-            lcd.print(sudio file n - 1);
+            lcd.print("Audio file n - 1");      // Again, is this supposed to be a variable or waiting for Wave testing?
             
             Debounce();
           }
@@ -260,7 +249,7 @@ void loop() {
           if(digitalRead(JoystickButton) == LOW)  {
             
             // Set the audio file of current state to preset audio 
-            AudioFilePreset = Audio file n;
+            //AudioFilePreset = Audio file n;   // no variables set before for Audio file n. I'll let you put that where you want and then get rid of commenting out this
             
             // Move to general waiting state
             CurrentState = STATE_AUDIO_SELECT;
