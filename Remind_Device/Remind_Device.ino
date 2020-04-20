@@ -1,16 +1,18 @@
 /* ENGR 152
  *  Maker Competition
  *  Remind Device
- *  Last edited by Jackson Pope, 4-18-20
+ *  Last edited by Kyler Howard and Jackson Pope
 */
 
 //================================================================================
 //                 Declare Global Variables & Header Files
 //================================================================================
 
-// including required libraries to run the I2C LCD
+// including required libraries to run the I2C LCD and then the Wave Shield
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <WaveHC.h>
+#include <WaveUtil.h>
 
 // starting the LCD at the I2C address and the parameters the microprocessor needs
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
@@ -86,7 +88,7 @@ void loop() {
 
   // State machine will Print out which state it moves to. Helps with troubleshooting
   // Starts state machine
-  switch(currentState){
+  switch(CurrentState){
   
       
     //=============================
@@ -123,7 +125,7 @@ void loop() {
        
         // move to STATE_LCD_ON
         CurrentState = STATE_LCD_ON;
-        Serial.Println("STATE_LCD_ON");
+        Serial.println("STATE_LCD_ON");
         
         Debounce();
       }
@@ -132,12 +134,12 @@ void loop() {
       // Logic is reversed for pullup input
       if(MotionSensor==LOW){
         
-        //Set speaer counter to 1
-        SpeakerCounter = 1;
+        //Set speaer count to 1
+        SpeakerCount = 1;
         
         //Go to STATE_SPEAKER_PLAY
         CurrentState = STATE_SPEAKER_PLAY;
-        Serial.Println("STATE_SPEAKER_PLAY");
+        Serial.println("STATE_SPEAKER_PLAY");
         
         Debounce();
       }      
