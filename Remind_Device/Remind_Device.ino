@@ -24,7 +24,6 @@ const int STATE_SPEAKER_PLAY = 5;
 const int STATE_ACKNOWLEDGE_WAIT = 6;
 const int STATE_MOTION_OFF = 7;
 
-
 // declaring digital pins
 int IndicatorLED = 8;            // Indicator LED output
 int ConfirmationButton = 9;      //acknowledge button? Input
@@ -34,13 +33,25 @@ int MotionSensor = 11;           // Motion sensor input
 int XJoystick = A0;              // x-axis of joystick
 int YJoystick = A1;              // y-axis of joystick
 int JoystickButton = A2;         // joystick button treat as digital
+int LCDPowerPin = A3;            // Power for LCD screen
 
 // declare variable data holders
 int SpeakerCount;                // For WAVE shield  -  not sure what it does
 int CurrentState;                // Holds State of State machine
+int AudioSelectState;            // Holds state value for audio selection
+int AudioFilePreset;             // Holds which audio file to play
+int PreviousMillis;              // Holds millis since joystick was moved for mini state machine
 
-// Custom Function Variable Parameters
+// Custom Function Variables and Parameters
 int DebounceDelay = 500;         // Delay set for debounce time - delay time after a button is pressed
+int Up = 700;                    // Trigger value for moving joystick up
+int Down = 300;                  // Trigger value for moving joystick down
+int Left = 300;                  // Trigger value for moving joystick left
+int Right = 700;                 // Trigger value for moving joystick right
+
+
+
+
 
 //================================================================================
 //                         Main Initializing Function
@@ -53,6 +64,7 @@ void setup() {
 
   // clearing the LCD and putting the cursor at 0,0
   lcd.clear();
+  lcd.setCursor(0,0);
 
   // start serial monitor at 9600 bpm
   Serial.begin(9600);
@@ -69,6 +81,7 @@ void setup() {
   pinMode (XJoystick, INPUT);
   pinMode (YJoystick, INPUT);
   pinMode (JoystickButton, INPUT);
+  pinMode (LCDPowerPin, OUTPUT);
 
   //Turn on indicator LED
   digitalWrite (IndicatorLED, HIGH);
@@ -76,6 +89,9 @@ void setup() {
   // Print initializing message on LCD Screen
   lcd.print("~~TESTING~~");
 }
+
+
+
 
 
 //================================================================================
@@ -103,23 +119,23 @@ void loop() {
         }
       
         // If Joystick is moved, Print the analog value of Joystick inputs 
-        if(XJoystick > 700 || XJoystick < 300 || YJoystick > 700 || YJoystick < 300) {
+        if(analogRead(XJoystick) > Right || analogRead(XJoystick) < Left || analogRead(YJoystick) > Up || analogRead(YJoystick) < Down) {
           
           // Print "Joystick moved"
           Serial.println("Joystick Moved");
           
           //print x-axis: (analog reading of x)
           Serial.print("x-axis: ");
-          Serial.println(XJoystick);
+          Serial.println(analogRead(XJoystick));
           
           //print y-axis: (analog reading of y)
           Serial.print("y-axis: ");
-          Serial.println(YJoystick);
+          Serial.println(analogRead(YJoystick));
         }
 
 
-      // If the joystick is moved or button is pressed, move to STATE_LCD_ON
-      if(XJoystick > 700 || XJoystick < 300 || YJoystick > 700 || YJoystick < 300 || JoystickButton == HIGH) {
+      // If the joystick is moved or button is pressed
+      if(analogRead(XJoystick) > Right || analogRead(XJoystick) < Left || analogRead(YJoystick) > Up || analogRead(YJoystick) < Down || digitalRead(JoystickButton) == LOW) {
        
         // move to STATE_LCD_ON
         CurrentState = STATE_LCD_ON;
@@ -130,7 +146,7 @@ void loop() {
       
       // If motion is sensed, set the speaker counter to 1 and move to STATE_SPEAKER_PLAY
       // Logic is reversed for pullup input
-      if(MotionSensor==LOW){
+      if(digitalRead(MotionSensor) == LOW){
         
         //Set speaer counter to 1
         SpeakerCounter = 1;
@@ -138,13 +154,12 @@ void loop() {
         //Go to STATE_SPEAKER_PLAY
         CurrentState = STATE_SPEAKER_PLAY;
         Serial.Println("STATE_SPEAKER_PLAY");
-        
-        Debounce();
       }      
 
       // end the case
       break;
 
+      
       
     //=============================
     //    State Two
@@ -152,28 +167,108 @@ void loop() {
 
     // starts state two of state machine
     case STATE_LCD_ON:
-
-      // Turn on LCD screen
-      // Display Audio Files
+      
+      // Turn LCD on
+      digitalWrite(LCDPowerPin, HIGH);
+      
+      //reset LCD screen
+      lcd.clear();
+      lcd.setCursor(0,0);
+      
+      // Print first audio file
+      lcd.print(audio file 1);
+      
+      // Set audio file select state to the first page
+      AudioFile = 1;
+      
       // Move to STATE_FILE_WAIT
+      CurrentState = STATE_FILE_WAIT;
+      Serial.Println("STATE_FILE_WAIT");
+      
+      // Set timer for mini state machine to 0
+      PreviousMillis = millis();
 
       // end the case
       break;
 
+      
+      
     //=============================
     //    State Three
     //=============================
 
     // starts state three of state machine
     case STATE_FILE_WAIT:
-
-      // If the joystick is moved, move the LCD readout to reflect this
-      // If a file is selected using the joystick, move to STATE_AUDIO_SELECT
-      // IF no user input for 30 seconds, turn off the LCD screen, and move to STATE_GENERAL_WAIT
+      
+      // Watch dog for state machine
+      // If joystick is moved
+      if(analogRead(XJoystick) > Right || analogRead(XJoystick) < Left || analogRead(YJoystick) > Up || analogRead(YJoystick) < Down) {
+        PreviousMillis = millis();
+      }
+      
+      // If no input for 30 seconds, go back to general wait state
+      if(millis() - PreviousMillis > 30000) {
+        
+        // Move to general wait state
+        CurrentState = STATE_GENERAL_WAIT;
+        Serial.Println("STATE_GENERAL_WAIT");
+      }
+      
+      //---------------------------
+      //   Mini State Machine
+      //---------------------------
+      
+      // Selection menu for choosing which audio file you want to play
+      // The # of cases will depend on the # of audio files we have
+      switch(AudioSelectState){
+        
+        //---------------------------
+        //    mini state n
+        //---------------------------
+        
+        // Template for audio selction state machine 
+        case n:
+                    
+          // It joystick is moved right or down
+          if(analogRead(XJoystick) > Right || analogRead(YJoystick) < Down) {
+          
+            //move to the next audio file
+            AudioSelectState = n + 1;
+            
+            // Print the next file's name on LCD screen
+            lcd.print(audio file n + 1);
+            
+            Debounce();
+          }
+          
+          // If joystick is moved left or up
+          if(analogRead(XJoystick) > Left || analogRead(YJoystick) < Up) {
+            
+            //move to previous audio file
+            AudioSelectState = n - 1;
+            
+            // Print the previous audio file
+            lcd.print(sudio file n - 1);
+            
+            Debounce();
+          }
+          
+          // If joystick button is pressed
+          if(digitalRead(JoystickButton) == LOW)  {
+            
+            // Set the audio file of current state to preset audio 
+            AudioFilePreset = Audio file n;
+            
+            // Move to general waiting state
+            CurrentState = STATE_AUDIO_SELECT;
+            Serial.println("STATE_AUDIO_SELECT");
+          }
+      }
 
       // end the case
       break;
-
+     
+         
 
     //=============================
     //    State Four
@@ -189,6 +284,8 @@ void loop() {
         
       // end the case    
       break;
+      
+      
 
     //=============================
     //    State Five
