@@ -28,7 +28,7 @@ const int STATE_MOTION_OFF = 7;
 // declaring digital pins
 int IndicatorLED = 8;            // Indicator LED output
 int ConfirmationButton = 9;      //acknowledge button? Input
-int MotionSensor = 10;           // Motion sensor input
+int MotionSensor = 11;           // Motion sensor input
 
 // declaring analog pins
 int XJoystick = A0;              // x-axis of joystick
