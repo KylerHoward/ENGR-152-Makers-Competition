@@ -1,7 +1,7 @@
 /* ENGR 152
  *  Maker Competition
  *  Remind Device
- *  Last edited by Jackson Pope, 4-18-20
+ *  Last edited by Jackson Pope, 4-19-20
 */
 
 //================================================================================
