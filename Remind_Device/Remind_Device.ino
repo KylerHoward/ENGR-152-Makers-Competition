@@ -13,6 +13,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <WaveHC.h>
 #include <WaveUtil.h>
+#include "remind.h"
 
 // starting the LCD at the I2C address and the parameters the microprocessor needs
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
@@ -30,7 +31,7 @@ const int n = 8;
 // declaring digital pins
 int IndicatorLED = 8;            // Indicator LED output
 int ConfirmationButton = 9;      //acknowledge button? Input
-int MotionSensor = 11;           // Motion sensor input
+int MotionSensor = 7;           // Motion sensor input
 
 // declaring analog pins
 int XJoystick = A0;              // x-axis of joystick
@@ -67,8 +68,11 @@ void setup() {
   // start serial monitor at 9600 bpm
   Serial.begin(9600);
 
+  waveSetup();
+
   // set the currentState to STATE_GENERAL_WAIT
   CurrentState = STATE_GENERAL_WAIT;
+  Serial.println(" ");
   Serial.println("STATE_GENERAL_WAIT");
 
 
