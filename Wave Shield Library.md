@@ -1,7 +1,5 @@
 # Outside Libraries Referenced in Wave Libaries
 
-alt 7 = • alt 9 = ○
-
 ## FatReader.cpp & FatReader.h
 
 • string.h
