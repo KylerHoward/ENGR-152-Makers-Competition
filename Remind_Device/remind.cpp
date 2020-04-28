@@ -35,7 +35,7 @@ dir_t dirBuf;     // buffer for directory reads
 // Function for setting the debounce delay time for the buttons library
 void waveSetup(void)
 {
-  putstring("Free RAM: ");       // This can help with debugging, running out of RAM is bad
+  Serial.print("Free RAM: ");       // This can help with debugging, running out of RAM is bad
   Serial.println(FreeRam());
 
   //  if (!card.init(true)) { //play with 4 MHz spi if 8MHz isn't working for you
@@ -57,9 +57,9 @@ void waveSetup(void)
   }
   
   // Lets tell the user about what we found
-  putstring("Using partition ");
+  Serial.print("Using partition ");
   Serial.print(part, DEC);
-  putstring(", type is FAT");
+  Serial.print(", type is FAT");
   Serial.println(vol.fatType(), DEC);     // FAT16 or FAT32?
   
   // Try to open the root directory
@@ -68,7 +68,7 @@ void waveSetup(void)
   }
   
   // Whew! We got past the tough parts.
-  putstring_nl("Files found (* = fragmented):");
+  Serial.println("Files found (* = fragmented):");
 
   // Print out all of the files in all the directories.
   root.ls(LS_R | LS_FLAG_FRAGMENTED);
