@@ -33,6 +33,9 @@ SD card, but I don't fully understand all it's using
 
     FatReader::rewind();
 
+readDir(dir_t, &dir) looks like it would read the directory. This should 
+then give you the short names of the files.
+
 ## FatStructs.h
 
 Defines all the different types of directory names and FAT entries
@@ -68,3 +71,27 @@ bits, 0 to 65535.
 
 I think ls() does the same thing as if you type "ls" into PowerShell 
 and displays a list of all the files in that folder.
+
+# Ideas For Program 
+
+Make an array of (char *name) from readDir (probably) called "files"
+
+• Find out how many files are in folder
+
+• Set that number as size of array (subtract one because array starts at 0)
+
+• Loop through folder again and fill array with file names. for loop - buttons example
+
+Display files[0] on LCD, using the cursor with while loop
+
+• If move down, increment i with i++, display files[i]...
+
+• If move up, subtract one i--, display files[i]...
+
+• If i == max value, i = 0
+
+• If i < 0, i = max value - 1
+
+• If button selected, set toPlay = files[i] 
+
+• Leave while loop, and add delay
