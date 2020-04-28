@@ -25,9 +25,9 @@ void play(FatReader &dir);
 void setup() {
   Serial.begin(9600);           // set up Serial library at 9600 bps for debugging
   
-  putstring_nl("\nWave test!");  // say we woke up!
+  Serial.println("\nWave test!");  // say we woke up!
   
-  putstring("Free RAM: ");       // This can help with debugging, running out of RAM is bad
+  Serial.print("Free RAM: ");       // This can help with debugging, running out of RAM is bad
   Serial.println(FreeRam());
 
   //  if (!card.init(true)) { //play with 4 MHz spi if 8MHz isn't working for you
@@ -49,9 +49,9 @@ void setup() {
   }
   
   // Lets tell the user about what we found
-  putstring("Using partition ");
+  Serial.print("Using partition ");
   Serial.print(part, DEC);
-  putstring(", type is FAT");
+  Serial.print(", type is FAT");
   Serial.println(vol.fatType(), DEC);     // FAT16 or FAT32?
   
   // Try to open the root directory
@@ -60,7 +60,7 @@ void setup() {
   }
   
   // Whew! We got past the tough parts.
-  putstring_nl("Files found (* = fragmented):");
+  Serial.println("Files found (* = fragmented):");
 
   // Print out all of the files in all the directories.
   root.ls(LS_R | LS_FLAG_FRAGMENTED);
@@ -116,7 +116,7 @@ void play(FatReader &dir) {
     }
     
     if (file.isDir()) {                   // check if we opened a new directory
-      putstring("Subdir: ");
+      Serial.print("Subdir: ");
       printEntryName(dirBuf);
       Serial.println();
       dirLevel += 2;                      // add more spaces
@@ -126,17 +126,17 @@ void play(FatReader &dir) {
     }
     else {
       // Aha! we found a file that isnt a directory
-      putstring("Playing ");
+      Serial.print("Playing ");
       printEntryName(dirBuf);              // print it out
       if (!wave.create(file)) {            // Figure out, is it a WAV proper?
-        putstring(" Not a valid WAV");     // ok skip it
+        Serial.print(" Not a valid WAV");     // ok skip it
       } else {
         Serial.println();                  // Hooray it IS a WAV proper!
         wave.play();                       // make some noise!
         
         uint8_t n = 0;
         while (wave.isplaying) {// playing occurs in interrupts, so we print dots in realtime
-          putstring(".");
+          Serial.print(".");
           if (!(++n % 32))Serial.println();
           delay(100);
         }       
