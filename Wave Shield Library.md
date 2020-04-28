@@ -56,8 +56,15 @@ formatting
 
     WaveHC::play();
 
-# Still do not understand
+# Things I Didn't Understand, But Now Do
 
-What does uint8\_t or wint16\_t mean? 
+uint8\_t is the same as a byte variable type, which is the same as 
+an unsigned char. It is shorthand for a type of unsigned integer 
+of length 8 bits, 0 to 255.
 
-What is ls()
+I can't find anything about wint16\_t, but uint16\_t is the same 
+thing as an unsigned short, or an unsigned integer of length 16 
+bits, 0 to 65535.
+
+I think ls() does the same thing as if you type "ls" into PowerShell 
+and displays a list of all the files in that folder.
