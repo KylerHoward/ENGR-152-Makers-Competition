@@ -8,6 +8,7 @@
 // Include Libraries & Declare Global Variables
 // ================================================================
 
+
 #include <WaveHC.h>
 #include <WaveUtil.h>
 #include <FatStructs.h>
@@ -16,10 +17,13 @@
 #include "remind.h"
 
 
+
 SdReader card;    // This object holds the information for the card
 FatVolume vol;    // This holds the information for the partition on the card
 FatReader root;   // This holds the information for the volumes root directory
+
 FatReader f;      // This holds the information for the file we're play
+
 WaveHC wave;      // This is the only wave (audio) object, since we will only play one at a time
 
 uint8_t dirLevel; // indent level for file/dir names    (for prettyprinting)
@@ -37,7 +41,9 @@ dir_t dirBuf;     // buffer for directory reads
 // ================================================================
 
 // Function for setting the debounce delay time for the buttons library
+
 FatReader waveSetup(void)
+
 {
   Serial.print("Free RAM: ");       // This can help with debugging, running out of RAM is bad
   Serial.println(FreeRam());
@@ -76,6 +82,7 @@ FatReader waveSetup(void)
 
   // Print out all of the files in all the directories.
   root.ls(LS_R | LS_FLAG_FRAGMENTED);
+
 
   root.rewind();
 
@@ -141,4 +148,5 @@ uint32_t getFiles(FatReader &dir) {
     
   }
   return i;
+
 }
