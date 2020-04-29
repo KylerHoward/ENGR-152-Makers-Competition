@@ -38,7 +38,16 @@
 // including required libraries to run the I2C LCD
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+
+#include <FatReader.h>
+#include <WaveHC.h>
 #include "remind.h"
+
+FatVolume Vol;    // This holds the information for the partition on the card
+FatReader Root;   // This holds the information for the filesystem on the card
+FatReader F;      // This holds the information for the file we're playing
+WaveHC Wave;      // This is the only wave (audio) object, since we will only play one at a time
+
 
 // starting the LCD at the I2C address and the parameters the microprocessor needs
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
@@ -46,8 +55,11 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 int Button = 9;
 
 // somehow have to find size of dir. Maybe readDir. for now it's an example. Somewhere in the Wave setup function it does this!
-const int dirSize = 5;
-byte files[dirSize];
+
+int dirSize = 5;
+String *files;
+
+
 
 // declaring analog pins
 int XJoystick = A0;              // x-axis of joystick
@@ -85,18 +97,25 @@ void setup() {
   pinMode (JoystickButton, INPUT_PULLUP);
 
   // setup the wave shield
-  waveSetup();
+
+  Root = waveSetup();
+
+  Serial.println(" ");
 
   // attempting to fill the array
   byte i;
+  dirSize = getFiles(Root);
+  Serial.println("dirSize: " + String(dirSize));
+  files = new String[dirSize];
   for (i=0; i < dirSize; i++){
-    
     files[i] = i;
-  
+    Serial.println(files[i]);
+
   }
 
   Serial.println(" ");
   Serial.println("Starting Menu!");
+
  
 }
 
@@ -111,18 +130,22 @@ void loop(){
   char i=0;
   while(true){
     
-    lcd.setCursor(0,1);
+
+    lcd.setCursor(2,1);
+
     lcd.print(files[i]);
 
   // a millis() based time to have a blinking cursor
     unsigned long currentTime = millis();
     if((currentTime - previousTime) >= 300) {
-      lcd.setCursor(13,1);
-      lcd.print("<");     
+
+      lcd.setCursor(0,1);
+      lcd.print(">");     
     }
   
     if((currentTime - previousTime) >= 600) {
-      lcd.setCursor(13,1);
+      lcd.setCursor(0,1);
+
       lcd.print(" "); 
       previousTime = currentTime;
     }
